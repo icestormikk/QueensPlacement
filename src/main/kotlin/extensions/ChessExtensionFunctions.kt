@@ -1,0 +1,4 @@
+package extensions
+
+class ChessExtensionFunctions {
+}
