@@ -2,17 +2,24 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.21"
+    id("org.openjfx.javafxplugin") version "0.0.7"
     application
 }
 
+javafx {
+    modules = listOf("javafx.controls", "javafx.media", "javafx.fxml")
+}
+
 group = "org.example"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation("no.tornado:tornadofx:1.7.20")
+    implementation("org.openjfx:javafx:19")
     testImplementation(kotlin("test"))
 }
 
@@ -26,4 +33,22 @@ tasks.withType<KotlinCompile> {
 
 application {
     mainClass.set("MainKt")
+}
+
+val fatJar = task("fatJar", type = Jar::class) {
+    archiveBaseName.set("${project.name}-fat")
+    manifest {
+        attributes["Implementation-Title"] = "Labyrinth Application"
+        attributes["Implementation-Version"] = "1.0"
+        attributes["Main-Class"] = "MainKt"
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    with(tasks.jar.get() as CopySpec)
+}
+
+tasks {
+    "build" {
+        dependsOn(fatJar)
+    }
 }
