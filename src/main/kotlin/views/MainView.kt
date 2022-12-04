@@ -33,7 +33,7 @@ class MainView : View("Queens Placement") {
 
     init {
         currentStage?.icons?.add(
-            Image("icons/chess-queen-solid.svg")
+            Image("icons/chess-queen.png")
         )
 
         configureCanvas()
